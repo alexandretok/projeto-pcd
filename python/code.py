@@ -156,7 +156,7 @@ def weighted_img(img, initial_img, a=0.8, b=1., d=0.):
 # plt.show()
 
 # Opens up video and processes it
-white_output = 'test_videos_output/solidYellowLeft.mp4'
-clip1 = VideoFileClip("test_videos/solidYellowLeft.mp4")
+white_output = '../test_videos_output/solidYellowLeft.mp4'
+clip1 = VideoFileClip("../test_videos/solidYellowLeft.mp4")
 white_clip = clip1.fl_image(process_image)
 white_clip.write_videofile(white_output, audio=False)
