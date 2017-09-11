@@ -120,6 +120,8 @@ def gaussian_blur(img, kernel_size):
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)
 
+    # print(img.shape[0])
+
     if len(img.shape) > 2:
         channel_count = img.shape[2]
         ignore_mask_color = (255,) * channel_count
