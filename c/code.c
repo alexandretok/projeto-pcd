@@ -38,28 +38,15 @@ void canny(){
 
 void region_of_interest(){
 	const CvArr* img = image;
-	CvArr* img_dest;
-	int mask[image->width][image->height];
-	memset(mask, 0, sizeof(mask[0][0]) * image->width * image->height);
-	CvArr* mask_img = mask;
+	IplImage* mask = cvCreateImage(cvGetSize(image), 8, 1);
 
-	printf("%d\n", image->width);
-	printf("%d\n", image->height);
-
-	// np.array([[(60,image.shape[0]),(430, 330), (530, 330), (image.shape[1]-60,image.shape[0])]], dtype=np.int32)
-
-	CvPoint  curve[]={cvPoint(60,10),  cvPoint(10,100),  cvPoint(100,100),  cvPoint(100,10)};
-	CvPoint* curveArr[1]={curve};
-	int      nCurvePts[1]={4};
+	CvPoint  curve[]={cvPoint(140,530),  cvPoint(430,330),  cvPoint(530,330),  cvPoint(920,530)};
+	CvPoint* curveArr[]={curve};
+	int      nCurvePts[]={4};
 	int      nCurves=1;
 
-	cvFillPoly(mask_img, curveArr, nCurvePts, nCurves, CV_RGB(255,255,255), 8, 0);
-
-	printf("desenha\n");
-
-	// masked_image = cv2.bitwise_and(img, mask)
-	cvAnd(img, mask_img, img_dest, NULL);
-	cvShowImage("region_of_interest", img_dest);
+	cvFillPoly(mask, curveArr, nCurvePts, nCurves, CV_RGB(255,255,255), 8, 0);
+	cvAnd(image, mask, image, NULL);
 }
 
 void hough(float rho, float theta, int threshold, float min_line_len, float max_line_gap){
