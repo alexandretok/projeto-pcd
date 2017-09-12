@@ -54,8 +54,9 @@ void hough(float rho, float theta, int threshold, float min_line_len, float max_
 	CvSeq* lines = 0;
 	lines = cvHoughLines2(image, storage, CV_HOUGH_PROBABILISTIC, rho, theta, threshold, min_line_len, max_line_gap);
 
-	IplImage* image2 = cvCreateImage( cvGetSize(image), 8, 3 );
-	cvCvtColor( image, image2, CV_GRAY2BGR );
+	IplImage* image2 = cvCreateImage( cvGetSize(image), 8, 3);
+	cvSetZero(image2);
+	
 	for( int i = 0; i < lines->total; i++ ) {
         CvPoint* line = (CvPoint*)cvGetSeqElem(lines,i);
         cvLine(image2, line[0], line[1], CV_RGB(255,0,0), 2, 8, 0);
