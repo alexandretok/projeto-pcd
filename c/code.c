@@ -89,6 +89,8 @@ CvPoint** find_lanes(){
 		}
 	}
 
+	printf("left1: %d %d %d %d\n", leftLine[0], leftLine[1], leftLine[2], leftLine[3]);
+
     // Finds the last (most to right and bottom) red pixel on the left side of the image
     for (int i = image->height - 1; i > 330; --i){
     	if(leftLine[2] != 0){
@@ -155,6 +157,9 @@ CvPoint** find_lanes(){
 
     printf("left: %d %d %d %d\n", leftLine[0], leftLine[1], leftLine[2], leftLine[3]);
     printf("right: %d %d %d %d\n", rightLine[0], rightLine[1], rightLine[2], rightLine[3]);
+
+    cvLine(image, leftPointLines[0], leftPointLines[1], CV_RGB(255,255,255), 2, 8, 0);
+    cvLine(image, rightPointLines[0], rightPointLines[1], CV_RGB(255,255,255), 2, 8, 0);
 
     return lines;
 }
