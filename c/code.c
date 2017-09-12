@@ -10,13 +10,17 @@ void canny();
 void region_of_interest();
 void gauss(int);
 void hough(float, float, int, float, float);
+CvPoint** find_lanes();
 
 int main(int argc, char**argv){
 	image = cvLoadImage(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
 	gauss(15);
 	canny();
 	region_of_interest();
-	hough(1, CV_PI/180, 50, 30, 10);
+	hough(1, CV_PI/180, 69, 10, 10);
+
+	find_lanes();
+	// printf(" %d \n", CV_IMAGE_ELEM(image,uchar,0,0));
 	
 	cvShowImage("imagem", image);
 	cvWaitKey(0);
@@ -62,4 +66,94 @@ void hough(float rho, float theta, int threshold, float min_line_len, float max_
     }
 
     image = image2;
+}
+
+CvPoint** find_lanes(){
+
+	cvShowImage("imagem2", image);
+
+	// Finds the first (most to left and top) red pixel on the left side of the image
+	int leftLine[4] = {0, 0, 0, 0};
+	for (int i = 330; i < image->height; ++i){
+		if(leftLine[0] != 0){
+			i = image->height;
+		}
+		else{
+			for (int j = 0; j < image->width/2; ++j){
+				if(CV_IMAGE_ELEM(image,int,i,j) > 0){
+					leftLine[0] = j;
+                	leftLine[1] = i;
+				}
+			}
+		}
+	}
+
+    // Finds the last (most to right and bottom) red pixel on the left side of the image
+    for (int i = image->height - 1; i > 330; --i){
+    	if(leftLine[2] != 0){
+    		i = 330;
+    	}
+    	else{
+    		for (int j = 0; j < image->width/2; ++j){
+    			if(CV_IMAGE_ELEM(image,int,i,j) > 0){
+    				leftLine[2] = j;
+                	leftLine[3] = i;
+    			}
+    		}
+    	}
+    }
+
+    // Finds the first (most to left and top) red pixel on the right side of the image
+    int rightLine[4] = {0, 0, 0, 0};
+	for (int i = 330; i < image->height; ++i){
+		if(rightLine[0] != 0){
+			i = image->height;
+		}
+		else{
+			for (int j = image->width/2; j < image->width; ++j){
+				if(CV_IMAGE_ELEM(image,int,i,j) > 0){
+					rightLine[0] = j;
+                	rightLine[1] = i;
+				}
+			}
+		}
+	}
+
+    // Finds the last (most to right and bottom) red pixel on the right side of the image
+    for (int i = image->height - 1; i > 330; --i){
+    	if(rightLine[2] != 0){
+    		i = 330;
+    	}
+    	else{
+    		for (int j = image->width/2; j < image->width; ++j){
+    			if(CV_IMAGE_ELEM(image,int,i,j) > 0){
+    				rightLine[2] = j;
+                	rightLine[3] = i;
+    			}
+    		}
+    	}
+    }
+
+    // Calculates the slopes of each lane line to extrapolate
+    float leftSlope = ((float) leftLine[1] - leftLine[3]) / ((float) leftLine[0] - leftLine[2]);
+    float left_b = ((float) leftLine[1]) - ((float) (leftSlope * leftLine[0]));
+    float left_x = (image->height - left_b) / leftSlope;
+    leftLine[2] = (int) left_x;
+    leftLine[3] = image->height;
+
+    float rightSlope = ((float) rightLine[1] - rightLine[3]) / ((float) rightLine[0] - rightLine[2]);
+    float right_b = ((float) rightLine[1]) - ((float) (rightSlope * rightLine[0]));
+    float right_x = (image->height - right_b) / rightSlope;
+    rightLine[2] = (int) right_x;
+    rightLine[3] = image->height;
+
+    CvPoint leftPointLines[] = {cvPoint(leftLine[0],leftLine[1]), cvPoint(leftLine[2],leftLine[3])};
+    CvPoint rightPointLines[] = {cvPoint(rightLine[0],rightLine[1]), cvPoint(rightLine[2],rightLine[3])};
+
+    CvPoint** lines = {leftPointLines, rightPointLines};
+
+    printf("left: %d %d %d %d\n", leftLine[0], leftLine[1], leftLine[2], leftLine[3]);
+    printf("right: %d %d %d %d\n", rightLine[0], rightLine[1], rightLine[2], rightLine[3]);
+
+    return lines;
 }
