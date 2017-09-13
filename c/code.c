@@ -18,7 +18,7 @@ int main(int argc, char**argv){
     gettimeofday(&tempo_inicial, NULL);  // inicio é uma struct com dois campos:tv_sec e tv_usec.
 
 	// load video
-	CvCapture* video = cvCaptureFromFile("solidWhiteRight.mp4");
+	CvCapture* video = cvCaptureFromFile("test.mp4");
 
 	// get video properties
 	double width = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_WIDTH);
