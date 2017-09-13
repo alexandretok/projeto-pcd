@@ -13,7 +13,7 @@ void find_lanes(IplImage*, IplImage*);
 int main(int argc, char**argv){
 
 	// load video
-	CvCapture* video = cvCaptureFromFile("solidWhiteRight.mp4");
+	CvCapture* video = cvCaptureFromFile("test.mp4");
 
 	// get video properties
 	double width = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_WIDTH);
