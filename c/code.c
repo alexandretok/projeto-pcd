@@ -2,66 +2,60 @@
 #include <cv.h>
 #include <highgui.h>
 
-IplImage* image = 0;
-IplImage* original_image = 0;
-double low = 5, ratio = 3;
+CvPoint polygon[4];
 
 void canny(IplImage*,int);
 void region_of_interest(IplImage*);
 void gauss(IplImage*,int);
 void hough(IplImage*,float, float, int, float, float);
 void find_lanes(IplImage*, IplImage*);
-CvPoint polygon[4];
 
 int main(int argc, char**argv){
 
-	image = cvLoadImage(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
-	// original_image = cvLoadImage(argv[1], CV_LOAD_IMAGE_UNCHANGED);
-	// gauss(image, 11);
-	// canny(image,3);
-	// region_of_interest(image);
-	// cvShowImage("imagem3", image);
-	// hough(image, 1, CV_PI/180, 69, 10, 10);
-	// cvShowImage("imagem4", image);
-	// find_lanes(image,original_image);
-	// cvShowImage("imagem5", image);
-	
-	// cvShowImage("imagem", original_image);
-
+	// load video
 	CvCapture* video = cvCaptureFromFile("solidWhiteRight.mp4");
-	IplImage* original_frame;
-	original_frame = cvQueryFrame(video);
 
+	// get video properties
+	double width = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_WIDTH);
+	double height = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_HEIGHT);
 	double fps = cvGetCaptureProperty(video, CV_CAP_PROP_FPS);
-	CvSize frame_size;
-    frame_size.width = original_frame->width;
-    frame_size.height = original_frame->height;
+	double frameCount = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_COUNT);
 
-	CvVideoWriter* output_video = cvCreateVideoWriter("output_video.mp4", CV_FOURCC('P','I','M','4'), fps, frame_size, 1);
+	double framesProcessed = 1;
 
-	while(cvGrabFrame(video) > 0){
-		printf("dsa ");
+	// set video output
+	CvVideoWriter* output_video = cvCreateAVIWriter("output_video.avi", CV_FOURCC('D', 'I', 'V', 'X'), fps, cvSize(width, height), 1);
+
+	printf("Starting...\n");
+
+	while(framesProcessed < frameCount){
+		IplImage* original_frame;
 		original_frame = cvQueryFrame(video);
-		IplImage* frame;
+		IplImage* frame = cvCreateImage(cvGetSize(original_frame),8,1);
 
-		cvSaveImage("original_frame.jpg", original_frame, 0);
-		frame = cvLoadImage("original_frame.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+		// convert to grayscale
+		cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
 		gauss(frame, 11);
 		canny(frame,3);
 		region_of_interest(frame);
 		hough(frame, 1, CV_PI/180, 69, 10, 10);
 		find_lanes(frame,original_frame);
+		// cvShowImage("frame", original_frame);
+		// cvWaitKey(33);
 
 		cvWriteFrame(output_video, original_frame);
+		framesProcessed++;
 
-		// cvShowImage("frame", original_frame);
+		// print progress every second processed
+		if((int)framesProcessed % (int)fps == 0 || framesProcessed == frameCount){
+			// system("clear");
+			printf("%.2f%%\n", 100 * framesProcessed/frameCount);
+		}
 	}
-
-
-	cvWaitKey(0);
-
-	cvReleaseImage(&image);
+	
+	printf("\nFinished!\n\n");
+	cvReleaseVideoWriter(&output_video);
 }
 
 void gauss(IplImage* image, int weight){
@@ -72,12 +66,11 @@ void gauss(IplImage* image, int weight){
 }
 
 void canny(IplImage* image, int apertureSize){
-	const CvArr* img = image;
-	cvCanny(img, image, low, low*ratio, apertureSize);
+	double low = 50, ratio = 4;
+	cvCanny(image, image, low, low*ratio, apertureSize);
 }
 
 void region_of_interest(IplImage* image_frame){
-	const CvArr* img = image_frame;
 	IplImage* mask = cvCreateImage(cvGetSize(image_frame), 8, 1);
     polygon[0] = cvPoint(140,530);
     polygon[1] = cvPoint(430,330);
@@ -86,10 +79,9 @@ void region_of_interest(IplImage* image_frame){
 	CvPoint* curveArr[]={polygon};
 	int nCurvePts[]={4};
 	int nCurves=1;
-
+	cvSetZero(mask);
 	cvFillPoly(mask, curveArr, nCurvePts, nCurves, CV_RGB(255,255,255), 8, 0);
 	cvAnd(image_frame, mask, image_frame, NULL);
-
 }
 
 void hough(IplImage* image, float rho, float theta, int threshold, float min_line_len, float max_line_gap){
@@ -177,10 +169,6 @@ void find_lanes(IplImage* image, IplImage* original_image){
     CvPoint leftPointLines[] = {cvPoint(leftLine[0],leftLine[1]), cvPoint(leftLine[2],leftLine[3])};
     CvPoint rightPointLines[] = {cvPoint(rightLine[0],rightLine[1]), cvPoint(rightLine[2],rightLine[3])};
 
-    // CvPoint* lines = {leftPointLines, rightPointLines};
-
     cvLine(original_image, leftPointLines[0], leftPointLines[1], CV_RGB(255,0,0), 4, CV_AA, 0);
     cvLine(original_image, rightPointLines[0], rightPointLines[1], CV_RGB(255,0,0), 4, CV_AA, 0);
-
-    // return lines;
 }
