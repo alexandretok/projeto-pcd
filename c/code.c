@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys/time.h>
 #include <cv.h>
 #include <highgui.h>
 
@@ -13,7 +14,7 @@ void find_lanes(IplImage*, IplImage*);
 int main(int argc, char**argv){
 
 	struct timeval tempo_inicial, tempo_final;
-    int long tempo_de_hoje, tmili;
+    int long tmili;
 
     gettimeofday(&tempo_inicial, NULL);  // inicio é uma struct com dois campos:tv_sec e tv_usec.
 
@@ -29,11 +30,11 @@ int main(int argc, char**argv){
 	double framesProcessed = 0;
 
 	// set video output
-	CvVideoWriter* output_video = cvCreateAVIWriter("output_video.avi", CV_FOURCC('D', 'I', 'V', 'X'), fps, cvSize(width, height), 1);
+	CvVideoWriter* output_video = cvCreateAVIWriter("output_video_3.avi", CV_FOURCC('D', 'I', 'V', 'X'), fps, cvSize(width, height), 1);
 
 	printf("Starting...\n");
 
-	tempo_de_hoje = (int long) (1000 * (tempo_inicial.tv_sec) + (tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+	// tempo_de_hoje = (int long) (1000 * (tempo_inicial.tv_sec) + (tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
 
 	while(framesProcessed < frameCount){
 		IplImage* original_frame;
@@ -63,10 +64,10 @@ int main(int argc, char**argv){
 			printf("%.2f%%\n", 100 * framesProcessed/frameCount);
 		}
 
-		gettimeofday(&tempo_final, NULL);
-	    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
-	    printf("tempo decorrido: %ld milissegundos\n", tmili);
-	    break;
+		// gettimeofday(&tempo_final, NULL);
+	 //    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+	 //    printf("tempo decorrido: %ld milissegundos\n", tmili);
+	 //    break;
 	}
 	
 	printf("\nFinished!\n\n");
@@ -85,7 +86,7 @@ void gauss(IplImage* image, int weight){
 }
 
 void canny(IplImage* image, int apertureSize){
-	double low = 50, ratio = 4;
+	double low = 30, ratio = 4;
 	cvCanny(image, image, low, low*ratio, apertureSize);
 }
 
