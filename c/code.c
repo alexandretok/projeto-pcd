@@ -12,6 +12,11 @@ void find_lanes(IplImage*, IplImage*);
 
 int main(int argc, char**argv){
 
+	struct timeval tempo_inicial, tempo_final;
+    int long tempo_de_hoje, tmili;
+
+    gettimeofday(&tempo_inicial, NULL);  // inicio é uma struct com dois campos:tv_sec e tv_usec.
+
 	// load video
 	CvCapture* video = cvCaptureFromFile("test.mp4");
 
@@ -27,6 +32,8 @@ int main(int argc, char**argv){
 	CvVideoWriter* output_video = cvCreateAVIWriter("output_video.avi", CV_FOURCC('D', 'I', 'V', 'X'), fps, cvSize(width, height), 1);
 
 	printf("Starting...\n");
+
+	tempo_de_hoje = (int long) (1000 * (tempo_inicial.tv_sec) + (tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
 
 	while(framesProcessed < frameCount){
 		IplImage* original_frame;
@@ -55,10 +62,19 @@ int main(int argc, char**argv){
 			// system("clear");
 			printf("%.2f%%\n", 100 * framesProcessed/frameCount);
 		}
+
+		gettimeofday(&tempo_final, NULL);
+	    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+	    printf("tempo decorrido: %ld milissegundos\n", tmili);
+	    break;
 	}
 	
 	printf("\nFinished!\n\n");
 	cvReleaseVideoWriter(&output_video);
+
+	gettimeofday(&tempo_final, NULL);
+    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+    printf("tempo decorrido: %ld milissegundos\n", tmili);
 }
 
 void gauss(IplImage* image, int weight){
