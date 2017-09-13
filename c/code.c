@@ -21,7 +21,7 @@ int main(int argc, char**argv){
 	double fps = cvGetCaptureProperty(video, CV_CAP_PROP_FPS);
 	double frameCount = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_COUNT);
 
-	double framesProcessed = 1;
+	double framesProcessed = 0;
 
 	// set video output
 	CvVideoWriter* output_video = cvCreateAVIWriter("output_video.avi", CV_FOURCC('D', 'I', 'V', 'X'), fps, cvSize(width, height), 1);
@@ -31,20 +31,23 @@ int main(int argc, char**argv){
 	while(framesProcessed < frameCount){
 		IplImage* original_frame;
 		original_frame = cvQueryFrame(video);
-		IplImage* frame = cvCreateImage(cvGetSize(original_frame),8,1);
+		if(original_frame) {
+			IplImage* frame = cvCreateImage(cvGetSize(original_frame),8,1);
 
-		// convert to grayscale
-		cvCvtColor(original_frame, frame, CV_BGR2GRAY);
+			// convert to grayscale
+			cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
-		gauss(frame, 11);
-		canny(frame,3);
-		region_of_interest(frame);
-		hough(frame, 1, CV_PI/180, 69, 10, 10);
-		find_lanes(frame,original_frame);
-		// cvShowImage("frame", original_frame);
-		// cvWaitKey(33);
+			gauss(frame, 11);
+			canny(frame,3);
+			region_of_interest(frame);
+			hough(frame, 1, CV_PI/180, 69, 10, 10);
+			find_lanes(frame,original_frame);
+			// cvShowImage("frame", original_frame);
+			// cvWaitKey(33);
 
-		cvWriteFrame(output_video, original_frame);
+			cvWriteFrame(output_video, original_frame);
+		}
+
 		framesProcessed++;
 
 		// print progress every second processed
