@@ -86,7 +86,7 @@ void gauss(IplImage* image, int weight){
 	if(weight % 2 == 0)
 		printf("\n\nERROR IN: gauss(weight) -> weight should be an ODD number (ex: 1, 3, 5...)\n\n");
 
-	cvSmooth(image, image, CV_GAUSSIAN, weight, weight, 0, 0);
+	cvSmooth(image, image, CV_GAUSSIAN, weight, 0, 0, 0);
 }
 
 void canny(IplImage* image, int apertureSize){
