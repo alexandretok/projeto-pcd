@@ -4,10 +4,13 @@
 #include <highgui.h>
 
 CvPoint polygon[4];
+const double LOW = 30, RATIO = 4;
+const int APERTURE_SIZE = 3;
+const int WEIGHT = 11;
 
-void canny(IplImage*,int);
+void canny(IplImage*);
 void region_of_interest(IplImage*);
-void gauss(IplImage*,int);
+void gauss(IplImage*);
 void hough(IplImage*,float, float, int, float, float);
 void find_lanes(IplImage*, IplImage*);
 
@@ -15,8 +18,6 @@ int main(int argc, char**argv){
 
 	struct timeval tempo_inicial, tempo_final;
     int long tmili;
-
-    gettimeofday(&tempo_inicial, NULL);  // inicio é uma struct com dois campos:tv_sec e tv_usec.
 
 	// load video
 	CvCapture* video = cvCaptureFromFile("test.mp4");
@@ -27,11 +28,14 @@ int main(int argc, char**argv){
 	double fps = cvGetCaptureProperty(video, CV_CAP_PROP_FPS);
 	double frameCount = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_COUNT);
 
+
 	double framesProcessed = 0;
 
 	// set video output
 	CvVideoWriter* output_video = cvCreateAVIWriter("output_video_3.avi", CV_FOURCC('D', 'I', 'V', 'X'), fps, cvSize(width, height), 1);
 
+	gettimeofday(&tempo_inicial, NULL);  // inicio é uma struct com dois campos:tv_sec e tv_usec.
+	
 	printf("Starting...\n");
 
 	// tempo_de_hoje = (int long) (1000 * (tempo_inicial.tv_sec) + (tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
@@ -45,8 +49,8 @@ int main(int argc, char**argv){
 			// convert to grayscale
 			cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
-			gauss(frame, 11);
-			canny(frame,3);
+			gauss(frame);
+			canny(frame);
 			region_of_interest(frame);
 			hough(frame, 1, CV_PI/180, 69, 10, 10);
 			find_lanes(frame,original_frame);
@@ -78,16 +82,16 @@ int main(int argc, char**argv){
     printf("tempo decorrido: %ld milissegundos\n", tmili);
 }
 
-void gauss(IplImage* image, int weight){
-	if(weight % 2 == 0)
-		printf("\n\nERROR IN: gauss(weight) -> weight should be an ODD number (ex: 1, 3, 5...)\n\n");
+void gauss(IplImage* image){
+	if(WEIGHT % 2 == 0)
+		printf("\n\nERROR IN: gauss(WEIGHT) -> WEIGHT should be an ODD number (ex: 1, 3, 5...)\n\n");
 
-	cvSmooth(image, image, CV_GAUSSIAN, weight, weight, 0, 0);
+	cvSmooth(image, image, CV_GAUSSIAN, WEIGHT, WEIGHT, 0, 0);
 }
 
-void canny(IplImage* image, int apertureSize){
-	double low = 30, ratio = 4;
-	cvCanny(image, image, low, low*ratio, apertureSize);
+#pragma loop ivdep
+void canny(IplImage* image){
+	cvCanny(image, image, LOW, LOW*RATIO, APERTURE_SIZE);
 }
 
 void region_of_interest(IplImage* image_frame){
@@ -98,7 +102,7 @@ void region_of_interest(IplImage* image_frame){
     polygon[3] = cvPoint(920,530);
 	CvPoint* curveArr[]={polygon};
 	int nCurvePts[]={4};
-	int nCurves=1;
+	const int nCurves=1;
 	cvSetZero(mask);
 	cvFillPoly(mask, curveArr, nCurvePts, nCurves, CV_RGB(255,255,255), 8, 0);
 	cvAnd(image_frame, mask, image_frame, NULL);
@@ -121,10 +125,11 @@ void hough(IplImage* image, float rho, float theta, int threshold, float min_lin
 }
 
 void find_lanes(IplImage* image, IplImage* original_image){
-	int upperLimit = polygon[1].y;
+	const int upperLimit = polygon[1].y;
 
 	// Finds the first (most to left and top) red pixel on the left side of the image
 	int leftLine[4] = {0, 0, 0, 0};
+	#pragma ivdep
 	for (int i = upperLimit; i < image->height; i++){
 		if(leftLine[0] != 0)
 			break;
@@ -137,6 +142,7 @@ void find_lanes(IplImage* image, IplImage* original_image){
 	}
 	
     // Finds the last (most to right and bottom) red pixel on the left side of the image
+    #pragma ivdep
     for (int i = image->height - 1; i > upperLimit; i--){
     	if(leftLine[2] != 0)
     		break;
@@ -150,6 +156,7 @@ void find_lanes(IplImage* image, IplImage* original_image){
 
     // Finds the first (most to left and top) red pixel on the right side of the image
     int rightLine[4] = {0, 0, 0, 0};
+    #pragma ivdep
 	for (int i = upperLimit; i < image->height; i++){
 		if(rightLine[0] != 0)
 			break;
@@ -162,6 +169,7 @@ void find_lanes(IplImage* image, IplImage* original_image){
 	}
 
     // Finds the last (most to right and bottom) red pixel on the right side of the image
+    #pragma ivdep
     for (int i = image->height - 1; i > upperLimit; i--){
     	if(rightLine[2] != 0)
     		break;

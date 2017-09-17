@@ -1,0 +1,429 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINING OPTION VALUES:
+  -inline-factor: 100
+  -inline-min-size: 30
+  -inline-max-size: 230
+  -inline-max-total-size: 2000
+  -inline-max-per-routine: 10000
+  -inline-max-per-compile: 500000
+
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (main(int, char **)) [1] code.c(17,31)
+  -> INLINE: (35,72) CV_FOURCC(char, char, char, char)
+  -> INLINE: (35,122) cvSize(int, int)
+  -> INLINE: (52,4) gauss(IplImage *)
+  -> INLINE: (53,4) canny(IplImage *)
+  -> INLINE: (54,4) region_of_interest(IplImage *)
+    -> INLINE: (99,30) cvPoint(int, int)
+    -> INLINE: (100,30) cvPoint(int, int)
+    -> INLINE: (101,30) cvPoint(int, int)
+    -> INLINE: (102,30) cvPoint(int, int)
+    -> INLINE: (107,49) cvScalar(double, double, double, double)
+  -> INLINE: (55,4) hough(IplImage *, float, float, int, float, float)
+    -> INLINE: (121,42) cvScalar(double, double, double, double)
+  -> INLINE: (56,4) find_lanes(IplImage *, IplImage *)
+    -> INLINE: (197,53) cvPoint(int, int)
+    -> INLINE: (197,87) cvPoint(int, int)
+    -> INLINE: (198,55) cvPoint(int, int)
+    -> INLINE: (198,91) cvPoint(int, int)
+    -> INLINE: (200,66) cvScalar(double, double, double, double)
+    -> INLINE: (201,68) cvScalar(double, double, double, double)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at code.c(43,2)
+   remark #15541: outer loop was not auto-vectorized: consider using SIMD directive
+
+   LOOP BEGIN at code.c(119,2) inlined into code.c(55,4)
+      remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+      remark #25456: Number of Array Refs Scalar Replaced In Loop: 1
+   LOOP END
+
+   LOOP BEGIN at code.c(133,2) inlined into code.c(56,4)
+      remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(133,46) ]
+
+      LOOP BEGIN at code.c(136,3) inlined into code.c(56,4)
+         remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+         remark #15346: vector dependence: assumed OUTPUT dependence between leftLine[0] (138:5) and leftLine[0] (138:5)
+         remark #25439: unrolled with remainder by 2  
+      LOOP END
+
+      LOOP BEGIN at code.c(136,3) inlined into code.c(56,4)
+      <Remainder>
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at code.c(146,5) inlined into code.c(56,4)
+      remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(146,53) ]
+
+      LOOP BEGIN at code.c(149,3) inlined into code.c(56,4)
+         remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+         remark #15346: vector dependence: assumed OUTPUT dependence between leftLine[2] (151:5) and leftLine[2] (151:5)
+         remark #25439: unrolled with remainder by 2  
+      LOOP END
+
+      LOOP BEGIN at code.c(149,3) inlined into code.c(56,4)
+      <Remainder>
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at code.c(160,2) inlined into code.c(56,4)
+      remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(160,46) ]
+
+      LOOP BEGIN at code.c(163,3) inlined into code.c(56,4)
+         remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+         remark #15346: vector dependence: assumed OUTPUT dependence between rightLine[0] (165:5) and rightLine[0] (165:5)
+         remark #25439: unrolled with remainder by 2  
+      LOOP END
+
+      LOOP BEGIN at code.c(163,3) inlined into code.c(56,4)
+      <Remainder>
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at code.c(173,5) inlined into code.c(56,4)
+      remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(173,53) ]
+
+      LOOP BEGIN at code.c(176,3) inlined into code.c(56,4)
+         remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+         remark #15346: vector dependence: assumed OUTPUT dependence between rightLine[2] (178:5) and rightLine[2] (178:5)
+         remark #25439: unrolled with remainder by 2  
+      LOOP END
+
+      LOOP BEGIN at code.c(176,3) inlined into code.c(56,4)
+      <Remainder>
+      LOOP END
+   LOOP END
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+code.c(107,2):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(121,9):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(131,18):remark #34000: call to memset implemented inline with stores with proven (alignment, offset): (16, 0)
+code.c(158,22):remark #34000: call to memset implemented inline with stores with proven (alignment, offset): (16, 0)
+code.c(200,5):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(201,5):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(17,31):remark #34051: REGISTER ALLOCATION : [main] code.c:17
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   30[ rax rdx rcx rbx rsi rdi r8-r15 zmm0-zmm15]
+        
+    Routine temporaries
+        Total         :     359
+            Global    :     119
+            Local     :     240
+        Regenerable   :      84
+        Spilled       :      23
+        
+    Routine stack
+        Variables     :     104 bytes*
+            Reads     :      19 [4.91e+01 ~ 1.4%]
+            Writes    :      33 [2.53e+02 ~ 7.0%]
+        Spills        :     200 bytes*
+            Reads     :      51 [1.44e+02 ~ 4.0%]
+            Writes    :      32 [8.40e+01 ~ 2.3%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: gauss(IplImage *)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (gauss(IplImage *)) [6] code.c(85,28)
+
+
+    Report from: Code generation optimizations [cg]
+
+code.c(85,28):remark #34051: REGISTER ALLOCATION : [gauss] code.c:85
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    7[ rdx rcx rsi rdi r8 zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      16
+            Global    :       0
+            Local     :      16
+        Regenerable   :       6
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: canny(IplImage *)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (canny(IplImage *)) [7] code.c(93,28)
+
+
+    Report from: Code generation optimizations [cg]
+
+code.c(93,28):remark #34051: REGISTER ALLOCATION : [canny] code.c:93
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    5[ rdx rsi rdi zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      15
+            Global    :       0
+            Local     :      15
+        Regenerable   :       5
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: region_of_interest(IplImage *)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (region_of_interest(IplImage *)) [8] code.c(97,47)
+  -> INLINE: (99,30) cvPoint(int, int)
+  -> INLINE: (100,30) cvPoint(int, int)
+  -> INLINE: (101,30) cvPoint(int, int)
+  -> INLINE: (102,30) cvPoint(int, int)
+  -> INLINE: (107,49) cvScalar(double, double, double, double)
+
+
+    Report from: Code generation optimizations [cg]
+
+code.c(107,2):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(97,47):remark #34051: REGISTER ALLOCATION : [region_of_interest] code.c:97
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   14[ rax rdx rcx rsi rdi r8-r13 zmm0-zmm2]
+        
+    Routine temporaries
+        Total         :      38
+            Global    :      11
+            Local     :      27
+        Regenerable   :      15
+        Spilled       :       2
+        
+    Routine stack
+        Variables     :      12 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       2 [2.00e+00 ~ 3.3%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: hough(IplImage *, float, float, int, float, float)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (hough(IplImage *, float, float, int, float, float)) [9] code.c(111,107)
+  -> INLINE: (121,42) cvScalar(double, double, double, double)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at code.c(119,2)
+   remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+   remark #25456: Number of Array Refs Scalar Replaced In Loop: 1
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+code.c(121,9):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(111,107):remark #34051: REGISTER ALLOCATION : [hough] code.c:111
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   17[ rax rdx rcx rbx rsi rdi r8-r10 r12-r15 zmm0-zmm3]
+        
+    Routine temporaries
+        Total         :      64
+            Global    :      27
+            Local     :      37
+        Regenerable   :      10
+        Spilled       :      11
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :      88 bytes*
+            Reads     :       9 [1.67e+01 ~ 9.2%]
+            Writes    :       9 [8.50e+00 ~ 4.7%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: find_lanes(IplImage *, IplImage *)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (find_lanes(IplImage *, IplImage *)) [10] code.c(127,59)
+  -> INLINE: (197,53) cvPoint(int, int)
+  -> INLINE: (197,87) cvPoint(int, int)
+  -> INLINE: (198,55) cvPoint(int, int)
+  -> INLINE: (198,91) cvPoint(int, int)
+  -> INLINE: (200,66) cvScalar(double, double, double, double)
+  -> INLINE: (201,68) cvScalar(double, double, double, double)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at code.c(133,2)
+   remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(133,46) ]
+
+   LOOP BEGIN at code.c(136,3)
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #25439: unrolled with remainder by 2  
+   LOOP END
+
+   LOOP BEGIN at code.c(136,3)
+   <Remainder>
+   LOOP END
+LOOP END
+
+LOOP BEGIN at code.c(146,5)
+   remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(146,53) ]
+
+   LOOP BEGIN at code.c(149,3)
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #25439: unrolled with remainder by 2  
+   LOOP END
+
+   LOOP BEGIN at code.c(149,3)
+   <Remainder>
+   LOOP END
+LOOP END
+
+LOOP BEGIN at code.c(160,2)
+   remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(160,46) ]
+
+   LOOP BEGIN at code.c(163,3)
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #25439: unrolled with remainder by 2  
+   LOOP END
+
+   LOOP BEGIN at code.c(163,3)
+   <Remainder>
+   LOOP END
+LOOP END
+
+LOOP BEGIN at code.c(173,5)
+   remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ code.c(173,53) ]
+
+   LOOP BEGIN at code.c(176,3)
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #25439: unrolled with remainder by 2  
+   LOOP END
+
+   LOOP BEGIN at code.c(176,3)
+   <Remainder>
+   LOOP END
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+code.c(131,18):remark #34000: call to memset implemented inline with stores with proven (alignment, offset): (16, 0)
+code.c(158,22):remark #34000: call to memset implemented inline with stores with proven (alignment, offset): (16, 0)
+code.c(200,5):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(201,5):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (16, 0), and destination (alignment, offset): (1, 0)
+code.c(127,59):remark #34051: REGISTER ALLOCATION : [find_lanes] code.c:127
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   31[ rax rdx rcx rbx rbp rsi rdi r8-r15 zmm0-zmm15]
+        
+    Routine temporaries
+        Total         :     183
+            Global    :      77
+            Local     :     106
+        Regenerable   :      10
+        Spilled       :      14
+        
+    Routine stack
+        Variables     :      48 bytes*
+            Reads     :      12 [1.18e+01 ~ 1.5%]
+            Writes    :      28 [7.22e+01 ~ 9.0%]
+        Spills        :      80 bytes*
+            Reads     :      22 [1.10e+01 ~ 1.4%]
+            Writes    :      12 [1.10e+01 ~ 1.4%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================

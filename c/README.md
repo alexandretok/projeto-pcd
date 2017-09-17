@@ -12,3 +12,6 @@ Compilar com vetorização:
 3. gcc code.c -o code -Wall -O2 -ftree-vectorize -fopt-info-vec-all `pkg-config --libs --cflags opencv` -ldl -lm && time ./code
 ```
 
+Compilar com vetorização ICC:
+
+1. icc code.c -o code -Wall -vec -O3 -axAVX -qopt-report -simd `pkg-config --libs --cflags opencv` -ldl -lm && time ./code
