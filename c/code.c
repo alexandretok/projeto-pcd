@@ -12,14 +12,16 @@ void hough(IplImage*,float, float, int, float, float);
 void find_lanes(IplImage*, IplImage*);
 
 int main(int argc, char**argv){
-
 	struct timeval tempo_inicial, tempo_final;
     int long tmili;
 
-    gettimeofday(&tempo_inicial, NULL);  // inicio é uma struct com dois campos:tv_sec e tv_usec.
+    polygon[0] = cvPoint(140,530);
+    polygon[1] = cvPoint(430,330);
+    polygon[2] = cvPoint(530,330);
+    polygon[3] = cvPoint(920,530);
 
 	// load video
-	CvCapture* video = cvCaptureFromFile("test.mp4");
+	CvCapture* video = cvCaptureFromFile("solidYellowLeft.mp4");
 
 	// get video properties
 	double width = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_WIDTH);
@@ -35,6 +37,8 @@ int main(int argc, char**argv){
 	printf("Starting...\n");
 
 	// tempo_de_hoje = (int long) (1000 * (tempo_inicial.tv_sec) + (tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+
+	gettimeofday(&tempo_inicial, NULL);
 
 	while(framesProcessed < frameCount){
 		IplImage* original_frame;
@@ -75,7 +79,7 @@ int main(int argc, char**argv){
 
 	gettimeofday(&tempo_final, NULL);
     tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
-    printf("tempo decorrido: %ld milissegundos\n", tmili);
+    printf("Tempo decorrido: %ld milissegundos\n", tmili);
 }
 
 void gauss(IplImage* image, int weight){
@@ -92,10 +96,6 @@ void canny(IplImage* image, int apertureSize){
 
 void region_of_interest(IplImage* image_frame){
 	IplImage* mask = cvCreateImage(cvGetSize(image_frame), 8, 1);
-    polygon[0] = cvPoint(140,530);
-    polygon[1] = cvPoint(430,330);
-    polygon[2] = cvPoint(530,330);
-    polygon[3] = cvPoint(920,530);
 	CvPoint* curveArr[]={polygon};
 	int nCurvePts[]={4};
 	int nCurves=1;
@@ -125,9 +125,7 @@ void find_lanes(IplImage* image, IplImage* original_image){
 
 	// Finds the first (most to left and top) red pixel on the left side of the image
 	int leftLine[4] = {0, 0, 0, 0};
-	for (int i = upperLimit; i < image->height; i++){
-		if(leftLine[0] != 0)
-			break;
+	for (int i = upperLimit; i < image->height && !leftLine[0]; i++){
 		for (int j = 0; j < image->width/2; j++){
 			if(CV_IMAGE_ELEM(image,unsigned char,i,j) > 0){
 				leftLine[0] = j;
@@ -137,9 +135,7 @@ void find_lanes(IplImage* image, IplImage* original_image){
 	}
 	
     // Finds the last (most to right and bottom) red pixel on the left side of the image
-    for (int i = image->height - 1; i > upperLimit; i--){
-    	if(leftLine[2] != 0)
-    		break;
+    for (int i = image->height - 1; i > upperLimit && !leftLine[2]; i--){
 		for (int j = 0; j < image->width/2; j++){
 			if(CV_IMAGE_ELEM(image,unsigned char,i,j) > 0){
 				leftLine[2] = j;
@@ -150,9 +146,7 @@ void find_lanes(IplImage* image, IplImage* original_image){
 
     // Finds the first (most to left and top) red pixel on the right side of the image
     int rightLine[4] = {0, 0, 0, 0};
-	for (int i = upperLimit; i < image->height; i++){
-		if(rightLine[0] != 0)
-			break;
+	for (int i = upperLimit; i < image->height && !rightLine[0]; i++){
 		for (int j = image->width/2; j < image->width; j++){
 			if(CV_IMAGE_ELEM(image,unsigned char,i,j) > 0){
 				rightLine[0] = j;
@@ -162,9 +156,7 @@ void find_lanes(IplImage* image, IplImage* original_image){
 	}
 
     // Finds the last (most to right and bottom) red pixel on the right side of the image
-    for (int i = image->height - 1; i > upperLimit; i--){
-    	if(rightLine[2] != 0)
-    		break;
+    for (int i = image->height - 1; i > upperLimit && !rightLine[2]; i--){
 		for (int j = image->width/2; j < image->width; j++){
 			if(CV_IMAGE_ELEM(image,unsigned char,i,j) > 0){
 				rightLine[2] = j;
