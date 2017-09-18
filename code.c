@@ -36,8 +36,6 @@ int main(int argc, char**argv){
 
 	printf("Starting...\n");
 
-	// tempo_de_hoje = (int long) (1000 * (tempo_inicial.tv_sec) + (tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
-
 	gettimeofday(&tempo_inicial, NULL);
 
 	while(framesProcessed < frameCount){
@@ -64,14 +62,8 @@ int main(int argc, char**argv){
 
 		// print progress every second processed
 		if((int)framesProcessed % (int)fps == 0 || framesProcessed == frameCount){
-			// system("clear");
 			printf("%.2f%%\n", 100 * framesProcessed/frameCount);
 		}
-
-		// gettimeofday(&tempo_final, NULL);
-	 //    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
-	 //    printf("tempo decorrido: %ld milissegundos\n", tmili);
-	 //    break;
 	}
 	
 	printf("\nFinished!\n\n");
