@@ -1,0 +1,485 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+100.07      0.04     0.04                             find_lanes
+  0.00      0.04     0.00     6249     0.00     0.00  cvScalar
+  0.00      0.04     0.00     2715     0.00     0.00  cvPoint
+  0.00      0.04     0.00      678     0.00     0.00  canny
+  0.00      0.04     0.00      678     0.00     0.00  hough
+  0.00      0.04     0.00      677     0.00     0.00  gauss
+  0.00      0.04     0.00      677     0.00     0.00  region_of_interest
+  0.00      0.04     0.00        1     0.00     0.00  CV_FOURCC
+  0.00      0.04     0.00        1     0.00     0.00  cvSize
+  0.00      0.04     0.00                             __do_global_dtors_aux
+  0.00      0.04     0.00                             __do_global_dtors_aux_fini_array_entry
+  0.00      0.04     0.00                             __frame_dummy_init_array_entry
+  0.00      0.04     0.00                             __gmon_start__
+  0.00      0.04     0.00                             __libc_csu_fini
+  0.00      0.04     0.00                             __libc_csu_init
+  0.00      0.04     0.00                             _fini
+  0.00      0.04     0.00                             _init
+  0.00      0.04     0.00                             _start
+  0.00      0.04     0.00                             atexit
+  0.00      0.04     0.00                             cvAttrList
+  0.00      0.04     0.00                             cvCalcHist
+  0.00      0.04     0.00                             cvCeil
+  0.00      0.04     0.00                             cvCloneSeq
+  0.00      0.04     0.00                             cvContourPerimeter
+  0.00      0.04     0.00                             cvDecRefData
+  0.00      0.04     0.00                             cvEllipseBox
+  0.00      0.04     0.00                             cvFloor
+  0.00      0.04     0.00                             cvFont
+  0.00      0.04     0.00                             cvGetCol
+  0.00      0.04     0.00                             cvGetNextSparseNode
+  0.00      0.04     0.00                             cvGetRow
+  0.00      0.04     0.00                             cvGetSetElem
+  0.00      0.04     0.00                             cvIncRefData
+  0.00      0.04     0.00                             cvIplDepth
+  0.00      0.04     0.00                             cvIsInf
+  0.00      0.04     0.00                             cvIsNaN
+  0.00      0.04     0.00                             cvMat
+  0.00      0.04     0.00                             cvPoint2D32f
+  0.00      0.04     0.00                             cvPoint2D64f
+  0.00      0.04     0.00                             cvPoint3D32f
+  0.00      0.04     0.00                             cvPoint3D64f
+  0.00      0.04     0.00                             cvPointFrom32f
+  0.00      0.04     0.00                             cvPointTo32f
+  0.00      0.04     0.00                             cvRNG
+  0.00      0.04     0.00                             cvROIToRect
+  0.00      0.04     0.00                             cvRandInt
+  0.00      0.04     0.00                             cvRandReal
+  0.00      0.04     0.00                             cvReadByName
+  0.00      0.04     0.00                             cvReadInt
+  0.00      0.04     0.00                             cvReadIntByName
+  0.00      0.04     0.00                             cvReadReal
+  0.00      0.04     0.00                             cvReadRealByName
+  0.00      0.04     0.00                             cvReadString
+  0.00      0.04     0.00                             cvReadStringByName
+  0.00      0.04     0.00                             cvRealScalar
+  0.00      0.04     0.00                             cvRect
+  0.00      0.04     0.00                             cvRectToROI
+  0.00      0.04     0.00                             cvReleaseMatND
+  0.00      0.04     0.00                             cvRound
+  0.00      0.04     0.00                             cvSURFPoint
+  0.00      0.04     0.00                             cvScalarAll
+  0.00      0.04     0.00                             cvSetNew
+  0.00      0.04     0.00                             cvSetRemoveByPtr
+  0.00      0.04     0.00                             cvSize2D32f
+  0.00      0.04     0.00                             cvSlice
+  0.00      0.04     0.00                             cvStarDetectorParams
+  0.00      0.04     0.00                             cvStarKeypoint
+  0.00      0.04     0.00                             cvSubS
+  0.00      0.04     0.00                             cvTermCriteria
+  0.00      0.04     0.00                             cvmGet
+  0.00      0.04     0.00                             cvmSet
+  0.00      0.04     0.00                             data_start
+  0.00      0.04     0.00                             deregister_tm_clones
+  0.00      0.04     0.00                             etext
+  0.00      0.04     0.00                             frame_dummy
+  0.00      0.04     0.00                             main
+  0.00      0.04     0.00                             register_tm_clones
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 24.98% of 0.04 seconds
+
+index % time    self  children    called     name
+                                 678             find_lanes [1]
+[1]    100.0    0.04    0.00       0+678     find_lanes [1]
+                0.00    0.00    2711/2715        cvPoint [3]
+                0.00    0.00    1356/6249        cvScalar [2]
+                0.00    0.00     678/678         canny [4]
+                0.00    0.00     678/678         hough [5]
+                0.00    0.00     677/677         gauss [6]
+                0.00    0.00     677/677         region_of_interest [7]
+                                 678             find_lanes [1]
+-----------------------------------------------
+                0.00    0.00     678/6249        region_of_interest [7]
+                0.00    0.00    1356/6249        find_lanes [1]
+                0.00    0.00    4215/6249        hough [5]
+[2]      0.0    0.00    0.00    6249         cvScalar [2]
+-----------------------------------------------
+                0.00    0.00       4/2715        main [67]
+                0.00    0.00    2711/2715        find_lanes [1]
+[3]      0.0    0.00    0.00    2715         cvPoint [3]
+-----------------------------------------------
+                0.00    0.00     678/678         find_lanes [1]
+[4]      0.0    0.00    0.00     678         canny [4]
+-----------------------------------------------
+                0.00    0.00     678/678         find_lanes [1]
+[5]      0.0    0.00    0.00     678         hough [5]
+                0.00    0.00    4215/6249        cvScalar [2]
+-----------------------------------------------
+                0.00    0.00     677/677         find_lanes [1]
+[6]      0.0    0.00    0.00     677         gauss [6]
+-----------------------------------------------
+                0.00    0.00     677/677         find_lanes [1]
+[7]      0.0    0.00    0.00     677         region_of_interest [7]
+                0.00    0.00     678/6249        cvScalar [2]
+-----------------------------------------------
+                0.00    0.00       1/1           main [67]
+[8]      0.0    0.00    0.00       1         CV_FOURCC [8]
+-----------------------------------------------
+                0.00    0.00       1/1           main [67]
+[9]      0.0    0.00    0.00       1         cvSize [9]
+-----------------------------------------------
+                                                 <spontaneous>
+[10]     0.0    0.00    0.00                 atexit [10]
+-----------------------------------------------
+                                                 <spontaneous>
+[11]     0.0    0.00    0.00                 cvAttrList [11]
+-----------------------------------------------
+                                                 <spontaneous>
+[12]     0.0    0.00    0.00                 cvCalcHist [12]
+-----------------------------------------------
+                                                 <spontaneous>
+[13]     0.0    0.00    0.00                 cvCeil [13]
+-----------------------------------------------
+                                                 <spontaneous>
+[14]     0.0    0.00    0.00                 cvCloneSeq [14]
+-----------------------------------------------
+                                                 <spontaneous>
+[15]     0.0    0.00    0.00                 cvContourPerimeter [15]
+-----------------------------------------------
+                                                 <spontaneous>
+[16]     0.0    0.00    0.00                 cvDecRefData [16]
+-----------------------------------------------
+                                                 <spontaneous>
+[17]     0.0    0.00    0.00                 cvEllipseBox [17]
+-----------------------------------------------
+                                                 <spontaneous>
+[18]     0.0    0.00    0.00                 cvFloor [18]
+-----------------------------------------------
+                                                 <spontaneous>
+[19]     0.0    0.00    0.00                 cvFont [19]
+-----------------------------------------------
+                                                 <spontaneous>
+[20]     0.0    0.00    0.00                 cvGetCol [20]
+-----------------------------------------------
+                                                 <spontaneous>
+[21]     0.0    0.00    0.00                 cvGetNextSparseNode [21]
+-----------------------------------------------
+                                                 <spontaneous>
+[22]     0.0    0.00    0.00                 cvGetRow [22]
+-----------------------------------------------
+                                                 <spontaneous>
+[23]     0.0    0.00    0.00                 cvGetSetElem [23]
+-----------------------------------------------
+                                                 <spontaneous>
+[24]     0.0    0.00    0.00                 cvIncRefData [24]
+-----------------------------------------------
+                                                 <spontaneous>
+[25]     0.0    0.00    0.00                 cvIplDepth [25]
+-----------------------------------------------
+                                                 <spontaneous>
+[26]     0.0    0.00    0.00                 cvIsInf [26]
+-----------------------------------------------
+                                                 <spontaneous>
+[27]     0.0    0.00    0.00                 cvIsNaN [27]
+-----------------------------------------------
+                                                 <spontaneous>
+[28]     0.0    0.00    0.00                 cvMat [28]
+-----------------------------------------------
+                                                 <spontaneous>
+[29]     0.0    0.00    0.00                 cvPoint2D32f [29]
+-----------------------------------------------
+                                                 <spontaneous>
+[30]     0.0    0.00    0.00                 cvPoint2D64f [30]
+-----------------------------------------------
+                                                 <spontaneous>
+[31]     0.0    0.00    0.00                 cvPoint3D32f [31]
+-----------------------------------------------
+                                                 <spontaneous>
+[32]     0.0    0.00    0.00                 cvPoint3D64f [32]
+-----------------------------------------------
+                                                 <spontaneous>
+[33]     0.0    0.00    0.00                 cvPointFrom32f [33]
+-----------------------------------------------
+                                                 <spontaneous>
+[34]     0.0    0.00    0.00                 cvPointTo32f [34]
+-----------------------------------------------
+                                                 <spontaneous>
+[35]     0.0    0.00    0.00                 cvRNG [35]
+-----------------------------------------------
+                                                 <spontaneous>
+[36]     0.0    0.00    0.00                 cvROIToRect [36]
+-----------------------------------------------
+                                                 <spontaneous>
+[37]     0.0    0.00    0.00                 cvRandInt [37]
+-----------------------------------------------
+                                                 <spontaneous>
+[38]     0.0    0.00    0.00                 cvRandReal [38]
+-----------------------------------------------
+                                                 <spontaneous>
+[39]     0.0    0.00    0.00                 cvReadByName [39]
+-----------------------------------------------
+                                                 <spontaneous>
+[40]     0.0    0.00    0.00                 cvReadInt [40]
+-----------------------------------------------
+                                                 <spontaneous>
+[41]     0.0    0.00    0.00                 cvReadIntByName [41]
+-----------------------------------------------
+                                                 <spontaneous>
+[42]     0.0    0.00    0.00                 cvReadReal [42]
+-----------------------------------------------
+                                                 <spontaneous>
+[43]     0.0    0.00    0.00                 cvReadRealByName [43]
+-----------------------------------------------
+                                                 <spontaneous>
+[44]     0.0    0.00    0.00                 cvReadString [44]
+-----------------------------------------------
+                                                 <spontaneous>
+[45]     0.0    0.00    0.00                 cvReadStringByName [45]
+-----------------------------------------------
+                                                 <spontaneous>
+[46]     0.0    0.00    0.00                 cvRealScalar [46]
+-----------------------------------------------
+                                                 <spontaneous>
+[47]     0.0    0.00    0.00                 cvRect [47]
+-----------------------------------------------
+                                                 <spontaneous>
+[48]     0.0    0.00    0.00                 cvRectToROI [48]
+-----------------------------------------------
+                                                 <spontaneous>
+[49]     0.0    0.00    0.00                 cvReleaseMatND [49]
+-----------------------------------------------
+                                                 <spontaneous>
+[50]     0.0    0.00    0.00                 cvRound [50]
+-----------------------------------------------
+                                                 <spontaneous>
+[51]     0.0    0.00    0.00                 cvSURFPoint [51]
+-----------------------------------------------
+                                                 <spontaneous>
+[52]     0.0    0.00    0.00                 cvScalarAll [52]
+-----------------------------------------------
+                                                 <spontaneous>
+[53]     0.0    0.00    0.00                 cvSetNew [53]
+-----------------------------------------------
+                                                 <spontaneous>
+[54]     0.0    0.00    0.00                 cvSetRemoveByPtr [54]
+-----------------------------------------------
+                                                 <spontaneous>
+[55]     0.0    0.00    0.00                 cvSize2D32f [55]
+-----------------------------------------------
+                                                 <spontaneous>
+[56]     0.0    0.00    0.00                 cvSlice [56]
+-----------------------------------------------
+                                                 <spontaneous>
+[57]     0.0    0.00    0.00                 cvStarDetectorParams [57]
+-----------------------------------------------
+                                                 <spontaneous>
+[58]     0.0    0.00    0.00                 cvStarKeypoint [58]
+-----------------------------------------------
+                                                 <spontaneous>
+[59]     0.0    0.00    0.00                 cvSubS [59]
+-----------------------------------------------
+                                                 <spontaneous>
+[60]     0.0    0.00    0.00                 cvTermCriteria [60]
+-----------------------------------------------
+                                                 <spontaneous>
+[61]     0.0    0.00    0.00                 cvmGet [61]
+-----------------------------------------------
+                                                 <spontaneous>
+[62]     0.0    0.00    0.00                 cvmSet [62]
+-----------------------------------------------
+                                                 <spontaneous>
+[63]     0.0    0.00    0.00                 data_start [63]
+-----------------------------------------------
+                                                 <spontaneous>
+[64]     0.0    0.00    0.00                 deregister_tm_clones [64]
+-----------------------------------------------
+                                                 <spontaneous>
+[65]     0.0    0.00    0.00                 etext [65]
+-----------------------------------------------
+                                                 <spontaneous>
+[66]     0.0    0.00    0.00                 frame_dummy [66]
+-----------------------------------------------
+                                                 <spontaneous>
+[67]     0.0    0.00    0.00                 main [67]
+                0.00    0.00       4/2715        cvPoint [3]
+                0.00    0.00       1/1           cvSize [9]
+                0.00    0.00       1/1           CV_FOURCC [8]
+-----------------------------------------------
+                                                 <spontaneous>
+[68]     0.0    0.00    0.00                 register_tm_clones [68]
+-----------------------------------------------
+                                                 <spontaneous>
+[69]     0.0    0.00    0.00                 __do_global_dtors_aux [69]
+-----------------------------------------------
+                                                 <spontaneous>
+[70]     0.0    0.00    0.00                 __do_global_dtors_aux_fini_array_entry [70]
+-----------------------------------------------
+                                                 <spontaneous>
+[71]     0.0    0.00    0.00                 __frame_dummy_init_array_entry [71]
+-----------------------------------------------
+                                                 <spontaneous>
+[72]     0.0    0.00    0.00                 __gmon_start__ [72]
+-----------------------------------------------
+                                                 <spontaneous>
+[73]     0.0    0.00    0.00                 __libc_csu_fini [73]
+-----------------------------------------------
+                                                 <spontaneous>
+[74]     0.0    0.00    0.00                 __libc_csu_init [74]
+-----------------------------------------------
+                                                 <spontaneous>
+[75]     0.0    0.00    0.00                 _fini [75]
+-----------------------------------------------
+                                                 <spontaneous>
+[76]     0.0    0.00    0.00                 _init [76]
+-----------------------------------------------
+                                                 <spontaneous>
+[77]     0.0    0.00    0.00                 _start [77]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+   [8] CV_FOURCC              [25] cvIplDepth             [50] cvRound
+  [69] __do_global_dtors_aux  [26] cvIsInf                [51] cvSURFPoint
+  [70] __do_global_dtors_aux_fini_array_entry [27] cvIsNaN [2] cvScalar
+  [71] __frame_dummy_init_array_entry [28] cvMat          [52] cvScalarAll
+  [72] __gmon_start__          [3] cvPoint                [53] cvSetNew
+  [73] __libc_csu_fini        [29] cvPoint2D32f           [54] cvSetRemoveByPtr
+  [74] __libc_csu_init        [30] cvPoint2D64f            [9] cvSize
+  [75] _fini                  [31] cvPoint3D32f           [55] cvSize2D32f
+  [76] _init                  [32] cvPoint3D64f           [56] cvSlice
+  [77] _start                 [33] cvPointFrom32f         [57] cvStarDetectorParams
+  [10] atexit                 [34] cvPointTo32f           [58] cvStarKeypoint
+   [4] canny                  [35] cvRNG                  [59] cvSubS
+  [11] cvAttrList             [36] cvROIToRect            [60] cvTermCriteria
+  [12] cvCalcHist             [37] cvRandInt              [61] cvmGet
+  [13] cvCeil                 [38] cvRandReal             [62] cvmSet
+  [14] cvCloneSeq             [39] cvReadByName           [63] data_start
+  [15] cvContourPerimeter     [40] cvReadInt              [64] deregister_tm_clones
+  [16] cvDecRefData           [41] cvReadIntByName        [65] etext
+  [17] cvEllipseBox           [42] cvReadReal              [1] find_lanes
+  [18] cvFloor                [43] cvReadRealByName       [66] frame_dummy
+  [19] cvFont                 [44] cvReadString            [6] gauss
+  [20] cvGetCol               [45] cvReadStringByName      [5] hough
+  [21] cvGetNextSparseNode    [46] cvRealScalar           [67] main
+  [22] cvGetRow               [47] cvRect                  [7] region_of_interest
+  [23] cvGetSetElem           [48] cvRectToROI            [68] register_tm_clones
+  [24] cvIncRefData           [49] cvReleaseMatND

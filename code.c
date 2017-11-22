@@ -2,6 +2,9 @@
 #include <sys/time.h>
 #include <cv.h>
 #include <highgui.h>
+#include <omp.h>
+#include <math.h>
+#include <string.h>
 
 CvPoint polygon[4];
 
@@ -11,9 +14,13 @@ void gauss(IplImage*,int);
 void hough(IplImage*,float, float, int, float, float);
 void find_lanes(IplImage*, IplImage*);
 
+int threadCount;
+
 int main(int argc, char**argv){
 	struct timeval tempo_inicial, tempo_final;
     int long tmili;
+
+    threadCount = strtol(argv[1], NULL, 10);
 
     polygon[0] = cvPoint(140,530);
     polygon[1] = cvPoint(430,330);
@@ -83,7 +90,39 @@ void gauss(IplImage* image, int weight){
 
 void canny(IplImage* image, int apertureSize){
 	double low = 30, ratio = 4;
-	cvCanny(image, image, low, low*ratio, apertureSize);
+
+	int totalWidth = cvGetSize(image).width;
+	int totalHeight = cvGetSize(image).height;
+
+	int pieceWidth = totalWidth/threadCount;
+	int pieceHeight = totalHeight/threadCount;
+
+	# pragma omp parallel num_threads(threadCount)
+	{
+		int my_rank = omp_get_thread_num();
+
+		int myX = (totalWidth / sqrt(threadCount)) * (my_rank % (int)sqrt(threadCount));
+		int myY = (totalHeight / sqrt(threadCount)) * (my_rank / (int)sqrt(threadCount));
+
+		printf("myX: %d, myY: %d, my_rank: %d\n", myX, myY, my_rank);
+
+		cvSetImageROI(image, cvRect(myX, myY, pieceWidth, pieceHeight));
+
+		IplImage *piece = cvCreateImage(cvGetSize(image),
+		                               image->depth,
+		                               image->nChannels);
+
+		cvCopy(image, piece, NULL);
+		cvResetImageROI(image);
+
+		char buf[20];
+		sprintf(buf, "piece_%d", my_rank);
+
+		cvShowImage(buf, piece);
+		cvWaitKey(0);
+
+		cvCanny(piece, piece, low, low*ratio, apertureSize);
+	}
 }
 
 void region_of_interest(IplImage* image_frame){
