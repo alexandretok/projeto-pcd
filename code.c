@@ -59,8 +59,7 @@ int main(int argc, char**argv){
 			// convert to grayscale
 			cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
-			gettimeofday(&tempo_inicial, NULL);
-			# pragma omp parallel num_threads(threadCount)
+			# pragma omp parallel num_threads(threadCount) private(tempo_inicial, tempo_final, total, tmili)
 			{
 				IplImage *_image = cvCloneImage(frame);
 				int my_rank = omp_get_thread_num();
@@ -73,11 +72,17 @@ int main(int argc, char**argv){
 				cvCopy(_image, piece, NULL);
 				cvResetImageROI(_image);
 
+				gettimeofday(&tempo_inicial, NULL);
+
 				gauss(piece, 11);
 				canny(piece,3);
 				// region_of_interest(piece);
 				hough(piece, 1, CV_PI/180, 69, 10, 10);
 
+				gettimeofday(&tempo_final, NULL);
+			    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+			    total += tmili;
+			    printf("Frame processado em: %f milissegundos\n", total / (framesProcessed+1));
 
 				// junta a imagem
 				# pragma omp critical
@@ -87,10 +92,6 @@ int main(int argc, char**argv){
 					cvResetImageROI(frame);
 				}
 			}
-			gettimeofday(&tempo_final, NULL);
-		    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
-		    total += tmili;
-		    printf("Frame processado em: %f milissegundos\n", total / (framesProcessed+1));
 
 			find_lanes(frame,original_frame);
 			// cvShowImage("frame", original_frame);
