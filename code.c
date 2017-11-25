@@ -45,6 +45,8 @@ int main(int argc, char**argv){
 
 	gettimeofday(&tempo_inicial, NULL);
 
+	int total = 0;
+
 	while(framesProcessed < frameCount){
 		IplImage* original_frame;
 		original_frame = cvQueryFrame(video);
@@ -55,7 +57,12 @@ int main(int argc, char**argv){
 			cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
 			gauss(frame, 11);
+			gettimeofday(&tempo_inicial, NULL);
 			canny(frame,3);
+			gettimeofday(&tempo_final, NULL);
+		    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+		    total += tmili;
+		    printf("Tempo decorrido: %f milissegundos\n", total/framesProcessed);
 			region_of_interest(frame);
 			hough(frame, 1, CV_PI/180, 69, 10, 10);
 			find_lanes(frame,original_frame);
@@ -94,35 +101,34 @@ void canny(IplImage* image, int apertureSize){
 	int totalWidth = cvGetSize(image).width;
 	int totalHeight = cvGetSize(image).height;
 
-	int pieceWidth = totalWidth/threadCount;
-	int pieceHeight = totalHeight/threadCount;
+	int pieceWidth = totalWidth/sqrt(threadCount);
+	int pieceHeight = totalHeight/sqrt(threadCount);
 
 	# pragma omp parallel num_threads(threadCount)
 	{
+		IplImage *_image = cvCloneImage(image);
 		int my_rank = omp_get_thread_num();
 
 		int myX = (totalWidth / sqrt(threadCount)) * (my_rank % (int)sqrt(threadCount));
 		int myY = (totalHeight / sqrt(threadCount)) * (my_rank / (int)sqrt(threadCount));
 
-		printf("myX: %d, myY: %d, my_rank: %d\n", myX, myY, my_rank);
-
-		cvSetImageROI(image, cvRect(myX, myY, pieceWidth, pieceHeight));
-
-		IplImage *piece = cvCreateImage(cvGetSize(image),
-		                               image->depth,
-		                               image->nChannels);
-
-		cvCopy(image, piece, NULL);
-		cvResetImageROI(image);
-
-		char buf[20];
-		sprintf(buf, "piece_%d", my_rank);
-
-		cvShowImage(buf, piece);
-		cvWaitKey(0);
+		cvSetImageROI(_image, cvRect(myX, myY, pieceWidth, pieceHeight));
+		IplImage *piece = cvCreateImage(cvGetSize(_image), 8, 1);
+		cvCopy(_image, piece, NULL);
+		cvResetImageROI(_image);
 
 		cvCanny(piece, piece, low, low*ratio, apertureSize);
+
+		# pragma omp critical
+		{
+			cvSetImageROI(image, cvRect(myX, myY, pieceWidth, pieceHeight));
+			cvCopy(piece, image, NULL);
+			cvResetImageROI(image);
+		}
 	}
+
+	// cvShowImage("imagem toda", image);
+	// cvWaitKey(0);
 }
 
 void region_of_interest(IplImage* image_frame){
