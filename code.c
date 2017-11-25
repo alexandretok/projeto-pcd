@@ -17,8 +17,12 @@ void find_lanes(IplImage*, IplImage*);
 int threadCount;
 
 int main(int argc, char**argv){
-	struct timeval tempo_inicial, tempo_final;
-    int long tmili;
+	struct timeval tempo_inicial_total, tempo_final_total;
+	struct timeval tempo_inicial_paralelo, tempo_final_paralelo;
+    int long tmili_total = 0;
+    int long tmili_paralelo = 0;
+    int total_total = 0;
+    int total_paralelo = 0;
 
     threadCount = strtol(argv[1], NULL, 10);
 
@@ -28,7 +32,7 @@ int main(int argc, char**argv){
     polygon[3] = cvPoint(920,530);
 
 	// load video
-	CvCapture* video = cvCaptureFromFile("solidYellowLeft_maior.mp4");
+	CvCapture* video = cvCaptureFromFile("solidYellowLeft1.mp4");
 
 	// get video properties
 	double width = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_WIDTH);
@@ -46,11 +50,8 @@ int main(int argc, char**argv){
 
 	printf("Starting...\n");
 
-	gettimeofday(&tempo_inicial, NULL);
-
-	int total = 0;
-
 	while(framesProcessed < frameCount){
+		gettimeofday(&tempo_inicial_total, NULL);
 		IplImage* original_frame;
 		original_frame = cvQueryFrame(video);
 		if(original_frame) {
@@ -59,7 +60,9 @@ int main(int argc, char**argv){
 			// convert to grayscale
 			cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
-			# pragma omp parallel num_threads(threadCount) private(tempo_inicial, tempo_final, total, tmili)
+			tmili_paralelo = 0;
+
+			# pragma omp parallel num_threads(threadCount) private(tempo_inicial_paralelo, tempo_final_paralelo) reduction(max:tmili_paralelo)
 			{
 				IplImage *_image = cvCloneImage(frame);
 				int my_rank = omp_get_thread_num();
@@ -72,17 +75,16 @@ int main(int argc, char**argv){
 				cvCopy(_image, piece, NULL);
 				cvResetImageROI(_image);
 
-				gettimeofday(&tempo_inicial, NULL);
+				gettimeofday(&tempo_inicial_paralelo, NULL);
 
 				gauss(piece, 11);
 				canny(piece,3);
 				// region_of_interest(piece);
 				hough(piece, 1, CV_PI/180, 69, 10, 10);
 
-				gettimeofday(&tempo_final, NULL);
-			    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
-			    total += tmili;
-			    printf("Frame processado em: %f milissegundos\n", total / (framesProcessed+1));
+				gettimeofday(&tempo_final_paralelo, NULL);
+			    tmili_paralelo = (int long) (1000 * (tempo_final_paralelo.tv_sec - tempo_inicial_paralelo.tv_sec) + (tempo_final_paralelo.tv_usec - tempo_inicial_paralelo.tv_usec) / 1000); // para transformar em milissegundos
+			    // printf("Frame processado em: %ld milissegundos\n", tmili);
 
 				// junta a imagem
 				# pragma omp critical
@@ -93,6 +95,8 @@ int main(int argc, char**argv){
 				}
 			}
 
+			total_paralelo += tmili_paralelo;
+
 			find_lanes(frame,original_frame);
 			// cvShowImage("frame", original_frame);
 			// cvWaitKey(33);
@@ -100,20 +104,29 @@ int main(int argc, char**argv){
 			cvWriteFrame(output_video, original_frame);
 		}
 
+		gettimeofday(&tempo_final_total, NULL);
+	    tmili_total = (int long) (1000 * (tempo_final_total.tv_sec - tempo_inicial_total.tv_sec) + (tempo_final_total.tv_usec - tempo_inicial_total.tv_usec) / 1000); // para transformar em milissegundos
+	    total_total += tmili_total;
+
 		framesProcessed++;
 
 		// print progress every second processed
 		if((int)framesProcessed % (int)fps == 0 || framesProcessed == frameCount){
 			printf("%.2f%%\n", 100 * framesProcessed/frameCount);
+			printf("(Total)    Frame processado em: %f milissegundos\n", total_total/(1+framesProcessed));
+			printf("(Paralelo) Frame processado em: %f milissegundos\n", total_paralelo/(1+framesProcessed));
 		}
 	}
+
+	// printf("(Paralelo) Frame processado em: %f milissegundos\n", total_paralelo/(1+framesProcessed));
+	// printf("(Total)    Frame processado em: %f milissegundos\n", total_total/(1+framesProcessed));
 	
 	printf("\nFinished!\n\n");
 	cvReleaseVideoWriter(&output_video);
 
-	gettimeofday(&tempo_final, NULL);
-    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
-    printf("Tempo decorrido: %ld milissegundos\n", tmili);
+	// gettimeofday(&tempo_final_total, NULL);
+    // tmili_total = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
+    // printf("Tempo decorrido: %ld milissegundos\n", tmili_total);
 }
 
 void gauss(IplImage* image, int weight){
