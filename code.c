@@ -28,13 +28,16 @@ int main(int argc, char**argv){
     polygon[3] = cvPoint(920,530);
 
 	// load video
-	CvCapture* video = cvCaptureFromFile("solidYellowLeft.mp4");
+	CvCapture* video = cvCaptureFromFile("solidYellowLeft_maior.mp4");
 
 	// get video properties
 	double width = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_WIDTH);
 	double height = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_HEIGHT);
 	double fps = cvGetCaptureProperty(video, CV_CAP_PROP_FPS);
 	double frameCount = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_COUNT);
+
+	int pieceWidth = width/sqrt(threadCount);
+	int pieceHeight = height/sqrt(threadCount);
 
 	double framesProcessed = 0;
 
@@ -56,15 +59,39 @@ int main(int argc, char**argv){
 			// convert to grayscale
 			cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
-			gauss(frame, 11);
 			gettimeofday(&tempo_inicial, NULL);
-			canny(frame,3);
+			# pragma omp parallel num_threads(threadCount)
+			{
+				IplImage *_image = cvCloneImage(frame);
+				int my_rank = omp_get_thread_num();
+
+				int myX = (width / sqrt(threadCount)) * (my_rank % (int)sqrt(threadCount));
+				int myY = (height / sqrt(threadCount)) * (my_rank / (int)sqrt(threadCount));
+
+				cvSetImageROI(_image, cvRect(myX, myY, pieceWidth, pieceHeight));
+				IplImage *piece = cvCreateImage(cvGetSize(_image), 8, 1);
+				cvCopy(_image, piece, NULL);
+				cvResetImageROI(_image);
+
+				gauss(piece, 11);
+				canny(piece,3);
+				// region_of_interest(piece);
+				hough(piece, 1, CV_PI/180, 69, 10, 10);
+
+
+				// junta a imagem
+				# pragma omp critical
+				{
+					cvSetImageROI(frame, cvRect(myX, myY, pieceWidth, pieceHeight));
+					cvCopy(piece, frame, NULL);
+					cvResetImageROI(frame);
+				}
+			}
 			gettimeofday(&tempo_final, NULL);
 		    tmili = (int long) (1000 * (tempo_final.tv_sec - tempo_inicial.tv_sec) + (tempo_final.tv_usec - tempo_inicial.tv_usec) / 1000); // para transformar em milissegundos
 		    total += tmili;
-		    printf("Tempo decorrido: %f milissegundos\n", total/framesProcessed);
-			region_of_interest(frame);
-			hough(frame, 1, CV_PI/180, 69, 10, 10);
+		    printf("Frame processado em: %f milissegundos\n", total / (framesProcessed+1));
+
 			find_lanes(frame,original_frame);
 			// cvShowImage("frame", original_frame);
 			// cvWaitKey(33);
@@ -97,38 +124,7 @@ void gauss(IplImage* image, int weight){
 
 void canny(IplImage* image, int apertureSize){
 	double low = 30, ratio = 4;
-
-	int totalWidth = cvGetSize(image).width;
-	int totalHeight = cvGetSize(image).height;
-
-	int pieceWidth = totalWidth/sqrt(threadCount);
-	int pieceHeight = totalHeight/sqrt(threadCount);
-
-	# pragma omp parallel num_threads(threadCount)
-	{
-		IplImage *_image = cvCloneImage(image);
-		int my_rank = omp_get_thread_num();
-
-		int myX = (totalWidth / sqrt(threadCount)) * (my_rank % (int)sqrt(threadCount));
-		int myY = (totalHeight / sqrt(threadCount)) * (my_rank / (int)sqrt(threadCount));
-
-		cvSetImageROI(_image, cvRect(myX, myY, pieceWidth, pieceHeight));
-		IplImage *piece = cvCreateImage(cvGetSize(_image), 8, 1);
-		cvCopy(_image, piece, NULL);
-		cvResetImageROI(_image);
-
-		cvCanny(piece, piece, low, low*ratio, apertureSize);
-
-		# pragma omp critical
-		{
-			cvSetImageROI(image, cvRect(myX, myY, pieceWidth, pieceHeight));
-			cvCopy(piece, image, NULL);
-			cvResetImageROI(image);
-		}
-	}
-
-	// cvShowImage("imagem toda", image);
-	// cvWaitKey(0);
+	cvCanny(image, image, low, low*ratio, apertureSize);
 }
 
 void region_of_interest(IplImage* image_frame){
