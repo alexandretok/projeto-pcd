@@ -5,7 +5,7 @@ gcc code.c -o code `pkg-config --libs --cflags opencv` -ldl -lm && ./code
 ```
 Compilar com OPENMP:
 ```
-gcc -fopenmp code.c -o code `pkg-config --libs --cflags opencv` -ldl -lm && ./code
+gcc -fopenmp code.c -o code `pkg-config --libs --cflags opencv` -ldl -lm && ./code {N_PROCESSOS}
 ```
 
 Compilar com vetorização:
