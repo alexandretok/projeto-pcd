@@ -32,7 +32,7 @@ int main(int argc, char**argv){
     polygon[3] = cvPoint(920,530);
 
 	// load video
-	CvCapture* video = cvCaptureFromFile("solidYellowLeft1.mp4");
+	CvCapture* video = cvCaptureFromFile("OutputFile4k.mp4");
 
 	// get video properties
 	double width = cvGetCaptureProperty(video, CV_CAP_PROP_FRAME_WIDTH);
@@ -49,78 +49,85 @@ int main(int argc, char**argv){
 	CvVideoWriter* output_video = cvCreateAVIWriter("output_video_3.avi", CV_FOURCC('D', 'I', 'V', 'X'), fps, cvSize(width, height), 1);
 
 	printf("Starting...\n");
+	IplImage* original_frame;
+				
+	IplImage* frame;
 
+	# pragma omp parallel num_threads(threadCount) private(tempo_inicial_paralelo, tempo_final_paralelo) reduction(max:tmili_paralelo)
 	while(framesProcessed < frameCount){
+		int my_rank = omp_get_thread_num();
 		gettimeofday(&tempo_inicial_total, NULL);
-		IplImage* original_frame;
-		original_frame = cvQueryFrame(video);
-		if(original_frame) {
-			IplImage* frame = cvCreateImage(cvGetSize(original_frame),8,1);
+		if(!my_rank){
+			original_frame = cvQueryFrame(video);
+			if(original_frame) 
+				frame = cvCreateImage(cvGetSize(original_frame),8,1);
+		}
 
+		#pragma omp barrier
+		// tmili_paralelo = 0;
+
+		if(original_frame) {
 			// convert to grayscale
 			cvCvtColor(original_frame, frame, CV_BGR2GRAY);
 
-			tmili_paralelo = 0;
+			IplImage *_image = cvCloneImage(frame);
 
-			# pragma omp parallel num_threads(threadCount) private(tempo_inicial_paralelo, tempo_final_paralelo) reduction(max:tmili_paralelo)
+			int myX = (width / sqrt(threadCount)) * (my_rank % (int)sqrt(threadCount));
+			int myY = (height / sqrt(threadCount)) * (my_rank / (int)sqrt(threadCount));
+
+			cvSetImageROI(_image, cvRect(myX, myY, pieceWidth, pieceHeight));
+			IplImage *piece = cvCreateImage(cvGetSize(_image), 8, 1);
+			cvCopy(_image, piece, NULL);
+			cvResetImageROI(_image);
+
+			// gettimeofday(&tempo_inicial_paralelo, NULL);
+
+			gauss(piece, 11);
+			canny(piece,3);
+			// region_of_interest(piece);
+			hough(piece, 1, CV_PI/180, 69, 10, 10);
+
+			// gettimeofday(&tempo_final_paralelo, NULL);
+		    // tmili_paralelo = (int long) (1000 * (tempo_final_paralelo.tv_sec - tempo_inicial_paralelo.tv_sec) + (tempo_final_paralelo.tv_usec - tempo_inicial_paralelo.tv_usec) / 1000); // para transformar em milissegundos
+		    // printf("Frame processado em: %ld milissegundos\n", tmili);
+
+			// junta a imagem
+			# pragma omp critical
 			{
-				IplImage *_image = cvCloneImage(frame);
-				int my_rank = omp_get_thread_num();
-
-				int myX = (width / sqrt(threadCount)) * (my_rank % (int)sqrt(threadCount));
-				int myY = (height / sqrt(threadCount)) * (my_rank / (int)sqrt(threadCount));
-
-				cvSetImageROI(_image, cvRect(myX, myY, pieceWidth, pieceHeight));
-				IplImage *piece = cvCreateImage(cvGetSize(_image), 8, 1);
-				cvCopy(_image, piece, NULL);
-				cvResetImageROI(_image);
-
-				gettimeofday(&tempo_inicial_paralelo, NULL);
-
-				gauss(piece, 11);
-				canny(piece,3);
-				// region_of_interest(piece);
-				hough(piece, 1, CV_PI/180, 69, 10, 10);
-
-				gettimeofday(&tempo_final_paralelo, NULL);
-			    tmili_paralelo = (int long) (1000 * (tempo_final_paralelo.tv_sec - tempo_inicial_paralelo.tv_sec) + (tempo_final_paralelo.tv_usec - tempo_inicial_paralelo.tv_usec) / 1000); // para transformar em milissegundos
-			    // printf("Frame processado em: %ld milissegundos\n", tmili);
-
-				// junta a imagem
-				# pragma omp critical
-				{
-					cvSetImageROI(frame, cvRect(myX, myY, pieceWidth, pieceHeight));
-					cvCopy(piece, frame, NULL);
-					cvResetImageROI(frame);
-				}
+				cvSetImageROI(frame, cvRect(myX, myY, pieceWidth, pieceHeight));
+				cvCopy(piece, frame, NULL);
+				cvResetImageROI(frame);
 			}
 
-			total_paralelo += tmili_paralelo;
+			#pragma omp barrier
 
-			find_lanes(frame,original_frame);
-			// cvShowImage("frame", original_frame);
-			// cvWaitKey(33);
+			// total_paralelo += tmili_paralelo;
 
-			cvWriteFrame(output_video, original_frame);
+			if(my_rank == 0){
+				// cvShowImage("frame", frame);
+				// cvWaitKey(0);
+			}
+
+			if(!my_rank){
+				find_lanes(frame,original_frame);
+				cvWriteFrame(output_video, original_frame);
+			}
 		}
 
-		gettimeofday(&tempo_final_total, NULL);
-	    tmili_total = (int long) (1000 * (tempo_final_total.tv_sec - tempo_inicial_total.tv_sec) + (tempo_final_total.tv_usec - tempo_inicial_total.tv_usec) / 1000); // para transformar em milissegundos
-	    total_total += tmili_total;
-
-		framesProcessed++;
-
-		// print progress every second processed
-		if((int)framesProcessed % (int)fps == 0 || framesProcessed == frameCount){
-			printf("%.2f%%\n", 100 * framesProcessed/frameCount);
-			printf("(Total)    Frame processado em: %f milissegundos\n", total_total/(1+framesProcessed));
-			printf("(Paralelo) Frame processado em: %f milissegundos\n", total_paralelo/(1+framesProcessed));
+		if(!my_rank){
+			gettimeofday(&tempo_final_total, NULL);
+		    tmili_total = (int long) (1000 * (tempo_final_total.tv_sec - tempo_inicial_total.tv_sec) + (tempo_final_total.tv_usec - tempo_inicial_total.tv_usec) / 1000); // para transformar em milissegundos
+		    total_total += tmili_total;
+			framesProcessed++;
+			// print progress every second processed
+			if(!my_rank && (int)framesProcessed % (int)fps == 0 || framesProcessed == frameCount){
+				printf("%.2f%%\n", 100 * framesProcessed/frameCount);
+				printf("(Total)    Frame processado em: %f milissegundos\n", total_total/(1+framesProcessed));
+				// printf("(Paralelo) Frame processado em: %f milissegundos\n", total_paralelo/(1+framesProcessed));
+			}
 		}
 	}
 
-	// printf("(Paralelo) Frame processado em: %f milissegundos\n", total_paralelo/(1+framesProcessed));
-	// printf("(Total)    Frame processado em: %f milissegundos\n", total_total/(1+framesProcessed));
-	
 	printf("\nFinished!\n\n");
 	cvReleaseVideoWriter(&output_video);
 
